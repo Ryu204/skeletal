@@ -13,3 +13,4 @@ file(GLOB_RECURSE
     "./src/*.?pp")
 
 add_executable(skeletal ${skeletal_source_code})
+target_link_libraries(skeletal PRIVATE sfml-graphics)
