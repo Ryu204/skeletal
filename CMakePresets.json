@@ -1,0 +1,13 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 24
+    },
+    "configurePresets": [
+        {
+            "name": "default",
+            "binaryDir": "build/default"
+        }
+    ]
+}
