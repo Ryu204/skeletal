@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cmath>
-#include <iostream>
+
 #include <SFML/Graphics.hpp>
 
 namespace ske {

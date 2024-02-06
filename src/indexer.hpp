@@ -14,6 +14,9 @@ struct indexer {
         indexer(unsigned int width, unsigned int height) : width(width), height(height) {
             assert(width > 0 && height > 0);
         }
+        indexer(const sf::Vector2u& size) : width(size.x), height(size.y) {
+            assert(size.x > 0 && size.y > 0);
+        }
         unsigned int encode(unsigned int w, unsigned int h) const {
             assert(w < width && h < height);
             return h * width + w;
@@ -23,7 +26,7 @@ struct indexer {
         }
         sf::Vector2u decode(unsigned int t) const {
             assert(t < width * height);
-            return sf::Vector2u{t % width, t / height};
+            return sf::Vector2u{t % width, t / width};
         }
         unsigned int left(unsigned int t, unsigned int count = 1) const {
             assert(t < width * height && t % width - count >= 0);
