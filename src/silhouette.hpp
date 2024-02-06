@@ -17,10 +17,13 @@ class silhouette {
         silhouette(const sf::Image& image)
             : size{image.getSize() + sf::Vector2u{2, 2}}
             , index{size}
-            , m_dsu{make_dsu()}
-            , m_dsu_leaders{m_dsu.leaders()}
+            , m_dsu{size.x * size.y}
         {
             fetch_points(image);
+            make_dsu();
+            for (const auto& probably_leader : m_dsu.leaders())
+                if (contains(probably_leader))
+                    m_dsu_leaders.insert(probably_leader);
         }
         bool contains(indexed_point p) const {
             return m_points.contains(p);
@@ -41,9 +44,8 @@ class silhouette {
                     if (image.getPixel({col, row}).a > 0)
                         m_points.insert(index.encode(col + 1, row + 1));
         }
-        dsu make_dsu() {
+        void make_dsu() {
             /* _ and | and \ connections */
-            dsu res{size.x * size.y};
             for (auto col = 0u; col < size.x - 1; ++col)
                 for (auto row = 0u; row < size.y - 1; ++row) {
                     const auto current = index.encode(col, row);
@@ -51,13 +53,13 @@ class silhouette {
                         continue;
                     const auto right = index.right(current);
                     if (contains(right))
-                        res.unite(current, right);
+                        m_dsu.unite(current, right);
                     const auto down = index.down(current);
                     if (contains(down))
-                        res.unite(current, down);
+                        m_dsu.unite(current, down);
                     const auto dr = index.all(current, 1, 1);
                     if (contains(dr))
-                        res.unite(current, dr);
+                        m_dsu.unite(current, dr);
                 }
             /* / connection */
             for (auto col = 1u; col < size.x; ++col)
@@ -67,13 +69,12 @@ class silhouette {
                         continue;
                     const auto dl = index.all(current, 1, -1);
                     if (contains(dl))
-                        res.unite(current, dl);
+                        m_dsu.unite(current, dl);
                 }
-            return std::move(res);
         }
         std::unordered_set<indexed_point> m_points;
-        const dsu m_dsu;
-        const std::unordered_set<indexed_point> m_dsu_leaders;
+        dsu m_dsu;
+        std::unordered_set<indexed_point> m_dsu_leaders;
 };
 
 } // namespace ske

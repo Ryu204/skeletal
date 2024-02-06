@@ -12,7 +12,7 @@ void main() {
             clamp(neighbor.x, 0.0, 1.0);
             clamp(neighbor.y, 0.0, 1.0);
             if (texture2D(texture, neighbor).a > threshold) {
-                gl_FragColor = vec4(0, 0, 0, 1);
+                gl_FragColor = vec4(0, 1, 0, 1);
                 return;
             }
         }

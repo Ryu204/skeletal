@@ -12,16 +12,16 @@ void draw_texture(sf::RenderTarget& target, const sf::Texture& texture, float tr
 
 void draw_contours(sf::RenderTarget& target, const ske::contour& contours) {
     const auto size = sf::Vector2f{target.getSize()};
-    std::vector<sf::VertexArray> exteriors;
+    sf::VertexArray exterior{sf::PrimitiveType::LineStrip};
     std::vector<sf::VertexArray> interiors;
     for (const auto& point : contours.exterior) {
-        exteriors.back().append(sf::Vertex{point.cwiseMul(size), sf::Color::Magenta});
+        exterior.append(sf::Vertex{point.cwiseMul(size), sf::Color::Magenta});
     }
-    target.draw(exteriors.back());
+    target.draw(exterior);
     for (const auto& loop : contours.interiors) {
-        interiors.push_back(sf::VertexArray{sf::PrimitiveType::Lines});
+        interiors.push_back(sf::VertexArray{sf::PrimitiveType::LineStrip});
         for (const auto& point : loop) {
-            interiors.back().append(sf::Vertex{point.cwiseMul(size), sf::Color::Yellow});
+            interiors.back().append(sf::Vertex{point.cwiseMul(size), sf::Color::Black});
         }
         target.draw(interiors.back());
     }

@@ -126,6 +126,7 @@ std::vector<indexed_edge_loop> edge_lists_to_loops(const indexed_edge_list& list
             next = *next_itr;
             start_point_loop.emplace_back(next);
         }
+        res.emplace_back(std::move(start_point_loop));
     }
     return res;
 }
