@@ -18,4 +18,10 @@ inline sf::Vector2f from_indexed_half_point(const indexed_half_point& p, const i
     return sf::Vector2f{index.decode(p.x) + index.decode(p.y)} / 2.F + sf::Vector2f{0.5F, 0.5F};
 }
 
+struct indexed_half_point_hash {
+    std::size_t operator () (const indexed_half_point& p) const {
+        return p.x ^ p.y;
+    }
+};
+
 } // namespace ske

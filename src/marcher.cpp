@@ -99,12 +99,80 @@ auto march(const silhouette& sil) {
     return std::move(res);
 }
 
-void contours::fetch_from(const sf::Image& image) {
-    exteriors.clear();
+/// @brief Convert a collection of edges in loops into a collection of loops
+std::vector<indexed_edge_loop> edge_lists_to_loops(const indexed_edge_list& list) {
+    std::vector<indexed_edge_loop> res;
+    std::unordered_map<indexed_half_point, std::vector<indexed_half_point>, indexed_half_point_hash> neighbors;
+    std::unordered_map<indexed_half_point, bool, indexed_half_point_hash> visited;
+    for (const auto& edge : list) {
+        neighbors[edge.x].push_back(edge.y);
+        neighbors[edge.y].push_back(edge.x);
+        visited[edge.x] = false;
+        visited[edge.y] = false;
+    }
+    for (const auto& [start_point, _] : visited) {
+        if (visited[start_point])
+            continue;
+        auto next = start_point;
+        indexed_edge_loop start_point_loop = {start_point};
+        while (!visited[next]) {
+            visited[next] = true;
+            assert(neighbors[next].size() == 2);
+            const auto& next_itr = std::find_if(neighbors[next].cbegin(), neighbors[next].cend(), 
+                [&visited](const auto& x) { return !visited[x]; });
+            const auto adjacent_all_visited = next_itr == neighbors[next].end();
+            if (adjacent_all_visited)
+                break;
+            next = *next_itr;
+            start_point_loop.emplace_back(next);
+        }
+    }
+    return res;
+}
+
+edge_loop indexed_loop_to_loop(const indexed_edge_loop& loop, const silhouette& sil) {
+    edge_loop res;
+    static const auto offset = [&sil](const indexed_half_point& p) { return 
+        (sf::Vector2f{sil.index.decode(p.x) + sil.index.decode(p.y)} / 2.F - sf::Vector2f{0.5F, 0.5F})
+        .cwiseDiv(sf::Vector2f{sil.size - sf::Vector2u{2, 2}}); 
+    };
+    for (const auto& half_point : loop) {
+        res.emplace_back(offset(half_point));
+    }
+    return res;
+}
+
+void contour::fetch_from(const sf::Image& image) {
+    exterior.clear();
     interiors.clear();
     const silhouette sil{image};
-    const auto adjacent_of{march(sil)};
-    
+    auto adjacent_of{march(sil)};
+    for (const auto& leader : sil.regions()) {
+        if (!adjacent_of.contains(leader)) 
+            adjacent_of[leader];
+    }
+    for (const auto& [cell, edges_list] : adjacent_of) {
+        const auto leader = sil.region_of(cell);
+        if (cell == leader) 
+            continue;
+        adjacent_of[leader].insert(adjacent_of[leader].end(), edges_list.begin(), edges_list.end());
+    }
+    for (const auto& leader : sil.regions()) {
+        auto edge_loops = edge_lists_to_loops(adjacent_of[leader]);
+        assert(!edge_loops.empty());
+        for (const auto& loop : edge_loops) 
+            interiors.emplace_back(indexed_loop_to_loop(loop, sil));
+        static const auto& width = [](const edge_loop& loop) {
+            return std::max_element(loop.cbegin(), loop.cend(), [](const auto& x, const auto& y) { return x.x < y.x; })->x
+            - std::min_element(loop.cbegin(), loop.cend(), [](const auto& x, const auto& y) { return x.x < y.x; })->x;
+        };     
+        const auto& widest_loop = std::max_element(interiors.cbegin(), interiors.cend(), 
+            [](const auto& a, const auto& b) { return width(a) < width(b); });
+        assert(widest_loop != interiors.end());
+        const auto exterior_index = widest_loop - interiors.cbegin();
+        exterior.swap(interiors[exterior_index]);
+        interiors.erase(widest_loop);
+    }
 }
 
 } // namespace ske

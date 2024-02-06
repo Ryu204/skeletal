@@ -4,8 +4,8 @@
 
 namespace ske {
 
-struct contours {
-    std::vector<edge_loop> exteriors;
+struct contour {
+    edge_loop exterior;
     std::vector<edge_loop> interiors;
     void fetch_from(const sf::Image& image);
 };

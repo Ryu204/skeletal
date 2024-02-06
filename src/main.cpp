@@ -10,17 +10,14 @@ void draw_texture(sf::RenderTarget& target, const sf::Texture& texture, float tr
     target.draw(rect);
 }
 
-void draw_contours(sf::RenderTarget& target, const ske::contours& contours) {
+void draw_contours(sf::RenderTarget& target, const ske::contour& contours) {
     const auto size = sf::Vector2f{target.getSize()};
     std::vector<sf::VertexArray> exteriors;
     std::vector<sf::VertexArray> interiors;
-    for (const auto& loop : contours.exteriors) {
-        exteriors.push_back(sf::VertexArray{sf::PrimitiveType::Lines});
-        for (const auto& point : loop) {
-            exteriors.back().append(sf::Vertex{point.cwiseMul(size), sf::Color::Magenta});
-        }
-        target.draw(exteriors.back());
+    for (const auto& point : contours.exterior) {
+        exteriors.back().append(sf::Vertex{point.cwiseMul(size), sf::Color::Magenta});
     }
+    target.draw(exteriors.back());
     for (const auto& loop : contours.interiors) {
         interiors.push_back(sf::VertexArray{sf::PrimitiveType::Lines});
         for (const auto& point : loop) {
@@ -41,7 +38,7 @@ int main(int argc, char* argv[]) {
         const auto resized_image = resized_texture.copyToImage();
         if (!resized_image.saveToFile("img/test_resize.png")) 
             throw std::runtime_error{"Cannot save resize result"};
-        ske::contours contours;
+        ske::contour contours;
         contours.fetch_from(resized_image);
         sf::RenderTexture result;
         if (!result.create(target.getSize()))
