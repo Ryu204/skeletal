@@ -12,18 +12,24 @@ void draw_texture(sf::RenderTarget& target, const sf::Texture& texture, float tr
 
 void draw_contours(sf::RenderTarget& target, const ske::contour& contours) {
     const auto size = sf::Vector2f{target.getSize()};
-    sf::VertexArray exterior{sf::PrimitiveType::LineStrip};
-    std::vector<sf::VertexArray> interiors;
-    for (const auto& point : contours.exterior) {
-        exterior.append(sf::Vertex{point.cwiseMul(size), sf::Color::Magenta});
-    }
-    target.draw(exterior);
-    for (const auto& loop : contours.interiors) {
-        interiors.push_back(sf::VertexArray{sf::PrimitiveType::LineStrip});
-        for (const auto& point : loop) {
-            interiors.back().append(sf::Vertex{point.cwiseMul(size), sf::Color::Black});
+    for (const auto& region : contours.regions) {
+        static constexpr std::array<sf::Color, 4> ecs = {sf::Color::Magenta, sf::Color::Cyan, sf::Color::Blue, sf::Color::Black};
+        static constexpr std::array<sf::Color, 4> ics = {sf::Color::Green, sf::Color::Red, sf::Color::Yellow, sf::Color{100, 100, 100}};
+        const auto ec = ecs[rand() % 4];
+        const auto ic = ics[rand() % 4];
+        sf::VertexArray exterior{sf::PrimitiveType::LineStrip};
+        std::vector<sf::VertexArray> interiors;
+        for (const auto& point : region.exterior) {
+            exterior.append(sf::Vertex{point.cwiseMul(size), ec});
         }
-        target.draw(interiors.back());
+        target.draw(exterior);
+        for (const auto& loop : region.interiors) {
+            interiors.push_back(sf::VertexArray{sf::PrimitiveType::LineStrip});
+            for (const auto& point : loop) {
+                interiors.back().append(sf::Vertex{point.cwiseMul(size), ic});
+            }
+            target.draw(interiors.back());
+        }
     }
 }
 

@@ -144,8 +144,7 @@ edge_loop indexed_loop_to_loop(const indexed_edge_loop& loop, const silhouette& 
 }
 
 void contour::fetch_from(const sf::Image& image) {
-    exterior.clear();
-    interiors.clear();
+    regions.clear();
     const silhouette sil{image};
     auto adjacent_of{march(sil)};
     for (const auto& leader : sil.regions()) {
@@ -159,6 +158,8 @@ void contour::fetch_from(const sf::Image& image) {
         adjacent_of[leader].insert(adjacent_of[leader].end(), edges_list.begin(), edges_list.end());
     }
     for (const auto& leader : sil.regions()) {
+        regions.push_back({});
+        auto& interiors = regions.back().interiors;
         auto edge_loops = edge_lists_to_loops(adjacent_of[leader]);
         assert(!edge_loops.empty());
         for (const auto& loop : edge_loops) 
@@ -171,7 +172,7 @@ void contour::fetch_from(const sf::Image& image) {
             [](const auto& a, const auto& b) { return width(a) < width(b); });
         assert(widest_loop != interiors.end());
         const auto exterior_index = widest_loop - interiors.cbegin();
-        exterior.swap(interiors[exterior_index]);
+        regions.back().exterior.swap(interiors[exterior_index]);
         interiors.erase(widest_loop);
     }
 }
