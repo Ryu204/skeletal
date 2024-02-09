@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
                 .original = target,
                 .resized_texture = resized_texture,
                 .bounds = contours,
-                .mesh = mesh,
+                .mesh_info = mesh,
             });
         }
         const auto output = mesh.dump();

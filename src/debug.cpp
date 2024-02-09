@@ -83,7 +83,7 @@ void save_debug_files(const debug_info& info, const debug_setting& settings) {
     if (settings.save_mesh) {
         canvas.clear(sf::Color::Transparent);
         draw_texture(canvas, info.original);
-        draw_mesh(canvas, info.mesh);
+        draw_mesh(canvas, info.mesh_info);
         if (!canvas.getTexture().copyToImage().saveToFile("output/_mesh.png"))
             throw std::runtime_error{"Cannot save mesh image"};
     }
@@ -91,7 +91,7 @@ void save_debug_files(const debug_info& info, const debug_setting& settings) {
         canvas.clear(sf::Color::Transparent);
         draw_texture(canvas, info.resized_texture, 0.3F);
         draw_texture(canvas, info.original);
-        draw_mesh(canvas, info.mesh);
+        draw_mesh(canvas, info.mesh_info);
         draw_contours(canvas, info.bounds);
         canvas.display();
         if (!canvas.getTexture().copyToImage().saveToFile("output/_all.png"))

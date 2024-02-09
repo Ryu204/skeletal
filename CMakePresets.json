@@ -7,7 +7,18 @@
     "configurePresets": [
         {
             "name": "default",
-            "binaryDir": "build/default"
+            "binaryDir": "build/default",
+            "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "TRUE"
+            }
+        },
+        {
+            "name": "python-module",
+            "inherits": "default",
+            "binaryDir": "build/python-module",
+            "cacheVariables": {
+                "SKELETAL_PYTHON_MODULE": "1"
+            }
         }
     ]
 }

@@ -19,7 +19,7 @@ struct debug_info {
     const sf::Texture& original;
     const sf::Texture& resized_texture;
     const contour& bounds;
-    const mesh& mesh;
+    const mesh& mesh_info;
 };
 
 void save_debug_files(const debug_info& info, const debug_setting& settings = debug_setting{});
