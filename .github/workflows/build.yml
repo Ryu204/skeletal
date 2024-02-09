@@ -51,6 +51,9 @@ jobs:
     - name: Checkout source
       uses: actions/checkout@v4
     
+    - name: Submodule update
+      run: git submodule init && git submodule update
+
     - name: Configure
       run: cmake --preset=default ${{ matrix.platform.flags }} -DCMAKE_BUILD_TYPE=${{ matrix.buildType }}
     
