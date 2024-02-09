@@ -1,3 +1,9 @@
 [submodule "SFML"]
 	path = extern/SFML
 	url = https://github.com/SFML/SFML
+[submodule "extern/TQMesh"]
+	path = extern/TQMesh
+	url = https://github.com/FloSewn/TQMesh
+[submodule "extern/argparse"]
+	path = extern/argparse
+	url = https://github.com/p-ranav/argparse

@@ -1,5 +1,7 @@
 .vscode/*
 .cache/*
+.venv/*
+output/*
 build/*
 CMakeUserPresets.json
-img/*.png
+img/*
