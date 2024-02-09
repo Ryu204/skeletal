@@ -7,3 +7,6 @@
 [submodule "extern/argparse"]
 	path = extern/argparse
 	url = https://github.com/p-ranav/argparse
+[submodule "extern/json"]
+	path = extern/json
+	url = https://github.com/nlohmann/json

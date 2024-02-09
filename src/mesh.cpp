@@ -53,4 +53,15 @@ void mesh::from_contour(const contour& bounds) {
     }
 }
 
+nlohmann::json mesh::dump() const {
+    nlohmann::json res;
+    for (const auto& v : vertices) {
+        res["vertices"].push_back({{"x", v.x}, {"y", v.y}});
+    }
+    for (const auto& id : index_buffer) {
+        res["indices"].push_back(id);
+    }
+    return std::move(res);
+}
+
 } // namespace ske

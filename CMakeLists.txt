@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 add_subdirectory("./extern/SFML")
 add_subdirectory("./extern/TQMesh")
 add_subdirectory("./extern/argparse")
+add_subdirectory("./extern/json")
 
 file(GLOB_RECURSE 
     skeletal_source_code
@@ -16,4 +17,9 @@ file(GLOB_RECURSE
 
 add_executable(skeletal ${skeletal_source_code})
 target_include_directories(skeletal PRIVATE ./extern/TQMesh/src/algorithm)
-target_link_libraries(skeletal PRIVATE sfml-graphics algorithm argparse::argparse)
+target_link_libraries(skeletal PRIVATE 
+    sfml-graphics 
+    algorithm 
+    argparse::argparse 
+    nlohmann_json::nlohmann_json
+)

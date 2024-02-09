@@ -15,6 +15,11 @@ inline void build_parser(argparse::ArgumentParser& parser) {
     parser.add_argument("file")
         .help("path to image file")
         .required();
+    parser.add_argument("--stdout", "-s")
+        .help("write output to stdout")
+        .flag();
+    parser.add_argument("--output", "-o")
+        .help("output file");
 }
 
 } // namespace ske

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 #include "resizer.hpp"
 #include "marcher.hpp"
@@ -33,6 +34,16 @@ int main(int argc, char* argv[]) {
                 .bounds = contours,
                 .mesh = mesh,
             });
+        }
+        const auto output = mesh.dump();
+        std::ios::sync_with_stdio(false);
+        std::cout.tie(nullptr);
+        if (parser.get<bool>("--stdout")) {
+            std::cout << output << "\n";
+        }
+        if (parser.is_used("--output")) {
+            std::ofstream writer{parser.get("--output")};
+            writer << output << "\n";
         }
         return 0;
     } catch (std::exception& e) {
