@@ -1,4 +1,7 @@
 #include "marcher.hpp"
+
+#include <algorithm>
+
 #include "silhouette.hpp"
 
 namespace ske {
