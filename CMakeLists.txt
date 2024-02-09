@@ -24,6 +24,11 @@ endif()
 
 add_subdirectory("./extern/SFML")
 add_subdirectory("./extern/TQMesh")
+if (WIN32)
+    target_link_libraries(algorithm
+    INTERFACE m
+    INTERFACE util )
+endif()
 add_subdirectory("./extern/argparse")
 add_subdirectory("./extern/json")
 
