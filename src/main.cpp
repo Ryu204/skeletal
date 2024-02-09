@@ -4,22 +4,29 @@
 #include "marcher.hpp"
 #include "mesh.hpp"
 #include "debug.hpp"
+#include "arg.hpp"
 
 int main(int argc, char* argv[]) {
     try {
-        if (argc < 2) 
-            throw std::runtime_error{"Provide path to image"};
+        argparse::ArgumentParser parser;
+        ske::build_parser(parser);
+        try {
+            parser.parse_args(argc, argv);
+        } catch (std::exception& e) {
+            std::cerr << "Invalid use\n";
+            std::cerr << parser;
+            return -1;
+        }
         sf::Texture target;
-        if (!target.loadFromFile(argv[1])) 
+        if (!target.loadFromFile(parser.get("file"))) 
             throw std::runtime_error{"Check path to image"};
-        const auto resized_texture = ske::resizer::with_width(target, 15.F);
+        const auto resized_texture = ske::resizer::with_width(target, parser.get<unsigned int>("--width"));
         const auto resized_image = resized_texture.copyToImage();
         ske::contour contours;
         contours.fetch_from(resized_image);
         ske::mesh mesh;
         mesh.from_contour(contours);
-        auto debug = true;
-        if (debug) {
+        if (parser.get<bool>("--debug")) {
             ske::save_debug_files(ske::debug_info{
                 .original = target,
                 .resized_texture = resized_texture,
