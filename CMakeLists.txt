@@ -27,7 +27,7 @@ add_subdirectory("./extern/TQMesh")
 add_subdirectory("./extern/argparse")
 add_subdirectory("./extern/json")
 
-target_include_directories(skeletal PRIVATE ./extern/TQMesh/src/algorithm)
+target_include_directories(skeletal PRIVATE ./extern/TQMesh)
 target_link_libraries(skeletal PRIVATE 
     sfml-graphics 
     algorithm 
