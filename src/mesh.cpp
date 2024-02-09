@@ -37,9 +37,19 @@ void mesh::from_contour(const contour& bounds) {
         TQMesh::TQAlgorithm::MeshGenerator generator;
         auto& mesh = generator.new_mesh(domain);
         generator.triangulation(mesh).generate_elements();
-        generator.quad_refinement(mesh).refine();
-        generator.write_mesh(mesh, std::format("img/output_{}.txt", reg_count), TQMesh::TQAlgorithm::MeshExportType::TXT);
-        generator.write_mesh(mesh, std::format("img/output_{}.vtu", reg_count), TQMesh::TQAlgorithm::MeshExportType::VTU);
+        std::unordered_map<unsigned int, unsigned int> algorithm_to_index;
+        for (auto i = 0u; i < generator.size(); ++i) {
+            auto& mesh = generator.mesh(i);
+            for (const auto& vert : mesh.vertices()) {
+                vertices.emplace_back(static_cast<float>(vert->xy()[0]), static_cast<float>(vert->xy()[1]));
+                algorithm_to_index[vert->index()] = vertices.size() - 1;
+            }
+            for (const auto& tri : mesh.triangles()) {
+                index_buffer.push_back(algorithm_to_index[tri->v1().index()]);
+                index_buffer.push_back(algorithm_to_index[tri->v2().index()]);
+                index_buffer.push_back(algorithm_to_index[tri->v3().index()]);
+            }
+        }
     }
 }
 
