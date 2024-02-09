@@ -5,3 +5,4 @@ output/*
 build/*
 CMakeUserPresets.json
 img/*
+!img/circle.png
